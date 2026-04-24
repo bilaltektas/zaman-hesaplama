@@ -36,6 +36,8 @@ body {
     box-shadow: 0 0 35px rgba(0, 255, 255, 0.4);
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 /* TITLE */
@@ -77,16 +79,35 @@ label {
     margin-top: 14px;
 }
 
-/* INPUT FIX (TAŞMA SORUNU ÇÖZÜLDÜ) */
+/* INPUT (FULL FIX) */
 input {
     width: 100%;
     max-width: 100%;
-    min-width: 0;              /* 🔥 önemli fix */
-    padding: 14px;
+    min-width: 0;
+    display: block;
+
+    padding: 12px 10px;
     margin-top: 6px;
+
     border-radius: 12px;
     border: none;
+
     font-size: 16px;
+    line-height: 1.2;
+
+    box-sizing: border-box;
+
+    -webkit-appearance: none;
+    appearance: none;
+    overflow: hidden;
+}
+
+/* SAFETY FOR TIME & NUMBER INPUT */
+input[type="time"],
+input[type="number"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
 }
 
@@ -133,7 +154,7 @@ footer {
     opacity: 0.6;
 }
 
-/* EXTRA MOBILE SAFE ZONE */
+/* MOBILE OPTIMIZATION */
 @media (max-width: 480px) {
     .container {
         padding: 18px;
