@@ -17,6 +17,7 @@ body {
     color: #fff;
 }
 
+/* FULL PAGE */
 .app {
     min-height: 100vh;
     display: flex;
@@ -25,6 +26,7 @@ body {
     padding: 20px;
 }
 
+/* CARD */
 .container {
     width: 100%;
     max-width: 420px;
@@ -36,6 +38,7 @@ body {
     flex-direction: column;
 }
 
+/* TITLE */
 .ai-title {
     text-align: center;
     font-size: 22px;
@@ -48,17 +51,18 @@ body {
     to { text-shadow: 0 0 18px cyan; }
 }
 
+/* MARQUEE */
 .marquee {
     overflow: hidden;
     white-space: nowrap;
-    margin-bottom: 12px;
+    margin-bottom: 18px;
 }
 
 .marquee span {
     display: inline-block;
     padding-left: 100%;
     animation: scroll 10s linear infinite;
-    font-size: 13px;
+    font-size: 14px;
     opacity: 0.85;
 }
 
@@ -67,46 +71,45 @@ body {
     100% { transform: translateX(-100%); }
 }
 
-.hint {
-    font-size: 12px;
-    opacity: 0.7;
-    text-align: center;
-    margin-bottom: 10px;
-    line-height: 1.4;
-}
-
+/* LABEL */
 label {
     font-size: 14px;
     margin-top: 14px;
 }
 
+/* INPUT FIX (TAŞMA SORUNU ÇÖZÜLDÜ) */
 input {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;              /* 🔥 önemli fix */
     padding: 14px;
     margin-top: 6px;
     border-radius: 12px;
     border: none;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
+/* BUTTON */
 button {
-    margin-top: 12px;
-    padding: 14px;
+    margin-top: 22px;
+    padding: 16px;
     width: 100%;
     border: none;
     border-radius: 16px;
     background: linear-gradient(90deg, #00c6ff, #0072ff);
     color: #fff;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.2s;
+    transition: transform 0.2s;
 }
 
 button:active {
     transform: scale(0.97);
 }
 
+/* RESULT */
 .result {
     margin-top: 24px;
     font-size: 30px;
@@ -117,15 +120,11 @@ button:active {
 
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
-.voice-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(0,255,255,0.4);
-}
-
+/* FOOTER */
 footer {
     margin-top: auto;
     padding-top: 20px;
@@ -134,11 +133,23 @@ footer {
     opacity: 0.6;
 }
 
-.status {
-    text-align:center;
-    font-size:12px;
-    margin-top:8px;
-    opacity:0.7;
+/* EXTRA MOBILE SAFE ZONE */
+@media (max-width: 480px) {
+    .container {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    input {
+        font-size: 15px;
+    }
+}
+
+/* DESKTOP */
+@media (min-width: 768px) {
+    .container {
+        padding: 32px;
+    }
 }
 </style>
 </head>
@@ -146,174 +157,49 @@ footer {
 <body>
 
 <div class="app">
-<div class="container">
+    <div class="container">
 
-<div class="ai-title" id="title">🤖 AI Çalışma Süresi</div>
+        <div class="ai-title">🤖 AI Destekli Çalışma Süresi</div>
 
-<div class="marquee">
-    <span>🎤 Sesli giriş • 🧠 Akıllı hesaplama • ⚡ Mobil uyumlu</span>
-</div>
+        <div class="marquee">
+            <span>✨ Yapay zeka hesaplıyor • ⚡ Mobil uyumlu • 🤖 Akıllı süre analizi ✨</span>
+        </div>
 
-<div class="hint">
-🎤 Örnek konuşma:<br>
-<b>başlangıç 09:15 bitiş 12:10 mola 45</b><br>
-veya<br>
-<b>09:15 başladı 12:10 bitti 45 dakika mola</b>
-</div>
+        <label>Başlangıç Saati</label>
+        <input type="time" id="startTime" value="12:00">
 
-<label>Başlangıç</label>
-<input type="time" id="startTime">
+        <label>Bitiş Saati</label>
+        <input type="time" id="endTime" value="13:00">
 
-<label>Bitiş</label>
-<input type="time" id="endTime">
+        <label>Mola Süresi (dakika)</label>
+        <input type="number" id="breakMinutes" value="10">
 
-<label>Mola (dk)</label>
-<input type="number" id="breakMinutes" value="0">
+        <button onclick="calculate()">🚀 Hesapla</button>
 
-<button class="voice-btn" onclick="startVoice()">🎤 Sesle Söyle</button>
-<button onclick="calculate()">🚀 Hesapla</button>
+        <div class="result" id="result"></div>
 
-<div class="status" id="status"></div>
-<div class="result" id="result"></div>
+        <footer>© Copyright - Bilal Tektaş</footer>
 
-<footer>© Copyright - Bilal Tektaş</footer>
-
-</div>
+    </div>
 </div>
 
 <script>
+function calculate() {
+    const start = document.getElementById("startTime").value;
+    const end = document.getElementById("endTime").value;
+    const breakMin = parseInt(document.getElementById("breakMinutes").value) || 0;
 
-const recognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    ? new (window.SpeechRecognition || window.webkitSpeechRecognition)()
-    : null;
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
 
-if(recognition){
-    recognition.lang = "tr-TR";
+    const totalStart = sh * 60 + sm;
+    const totalEnd = eh * 60 + em;
+
+    const workMinutes = totalEnd - totalStart - breakMin;
+
+    document.getElementById("result").innerText =
+        workMinutes >= 0 ? `🧠 ${workMinutes} dakika` : "⛔ Hatalı giriş";
 }
-
-/* 🔊 SPEAK */
-function speak(text){
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "tr-TR";
-    window.speechSynthesis.speak(u);
-}
-
-/* 🎤 VOICE */
-function startVoice(){
-
-    if(!recognition){
-        alert("Ses desteklenmiyor");
-        return;
-    }
-
-    recognition.start();
-
-    document.getElementById("status").innerText = "🎤 Dinleniyor...";
-
-    recognition.onresult = (e)=>{
-        let text = e.results[0][0].transcript.toLowerCase();
-        document.getElementById("status").innerText = "🧠 " + text;
-        parse(text);
-    };
-}
-
-/* 🧠 STRICT PARSER */
-function parse(text){
-
-    text = text.toLowerCase();
-
-    let start = null;
-    let end = null;
-    let breakMin = 0;
-
-    let b = text.match(/(\d+)\s*(saat|dk|dakika)/);
-    if(b){
-        breakMin = b[2].includes("saat") ? b[1]*60 : parseInt(b[1]);
-    }
-
-    function toMin(t){
-        t = t.replace("buçuk","30");
-
-        let m = t.match(/(\d{1,2})[:\.]\s*(\d{2})/);
-        if(m) return +m[1]*60 + +m[2];
-
-        m = t.match(/(\d{1,2})\s+(\d{2})/);
-        if(m) return +m[1]*60 + +m[2];
-
-        m = t.match(/(\d{1,2})/);
-        if(m) return +m[1]*60;
-
-        return null;
-    }
-
-    let s = text.match(/(\d{1,2}[:\.]?\s*\d{0,2}).*(başla|başladı)/);
-    let e = text.match(/(\d{1,2}[:\.]?\s*\d{0,2}).*(bitti|bitir)/);
-
-    if(s) start = toMin(s[1]);
-    if(e) end = toMin(e[1]);
-
-    if(start===null || end===null){
-        let t = text.match(/(\d{1,2}[:\.]?\s*\d{0,2})/g);
-        if(t && t.length>=2){
-            start = toMin(t[0]);
-            end = toMin(t[1]);
-        }
-    }
-
-    if(start===null || end===null){
-        document.getElementById("status").innerText = "❌ Format hatalı";
-        return;
-    }
-
-    if(text.includes("öğlen") && end < start) end += 720;
-    if(text.includes("akşam") && end < 720) end += 720;
-    if(text.includes("gece") && end < start) end += 1440;
-
-    document.getElementById("startTime").value =
-        String(Math.floor(start/60)).padStart(2,"0")+":"+String(start%60).padStart(2,"0");
-
-    document.getElementById("endTime").value =
-        String(Math.floor(end/60)).padStart(2,"0")+":"+String(end%60).padStart(2,"0");
-
-    document.getElementById("breakMinutes").value = breakMin;
-
-    calculate();
-}
-
-/* ⚡ CALC */
-function calculate(){
-
-    let s = document.getElementById("startTime").value;
-    let e = document.getElementById("endTime").value;
-    let b = parseInt(document.getElementById("breakMinutes").value)||0;
-
-    if(!s||!e){
-        document.getElementById("status").innerText = "❌ eksik veri";
-        return;
-    }
-
-    let [sh,sm] = s.split(":").map(Number);
-    let [eh,em] = e.split(":").map(Number);
-
-    let start = sh*60+sm;
-    let end = eh*60+em;
-
-    if(end < start) end += 1440;
-
-    let total = end - start - b;
-
-    if(total < 0){
-        document.getElementById("status").innerText = "❌ hata";
-        return;
-    }
-
-    document.getElementById("result").innerText = `🧠 ${total} dakika`;
-
-    document.getElementById("status").innerText = "✅ hesaplandı";
-
-    speak("Çalışma süresi " + total + " dakika");
-}
-
 </script>
 
 </body>
