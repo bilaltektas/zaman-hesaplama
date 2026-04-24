@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -18,7 +17,6 @@ body {
     color: #fff;
 }
 
-/* FULL PAGE */
 .app {
     min-height: 100vh;
     display: flex;
@@ -27,7 +25,6 @@ body {
     padding: 20px;
 }
 
-/* CARD */
 .container {
     width: 100%;
     max-width: 420px;
@@ -39,7 +36,6 @@ body {
     flex-direction: column;
 }
 
-/* TITLE */
 .ai-title {
     text-align: center;
     font-size: 22px;
@@ -52,18 +48,17 @@ body {
     to { text-shadow: 0 0 18px cyan; }
 }
 
-/* MARQUEE */
 .marquee {
     overflow: hidden;
     white-space: nowrap;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
 }
 
 .marquee span {
     display: inline-block;
     padding-left: 100%;
     animation: scroll 10s linear infinite;
-    font-size: 14px;
+    font-size: 13px;
     opacity: 0.85;
 }
 
@@ -72,7 +67,14 @@ body {
     100% { transform: translateX(-100%); }
 }
 
-/* FORM */
+.hint {
+    font-size: 12px;
+    opacity: 0.7;
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
 label {
     font-size: 14px;
     margin-top: 14px;
@@ -87,26 +89,24 @@ input {
     font-size: 16px;
 }
 
-/* BUTTON */
 button {
-    margin-top: 22px;
-    padding: 16px;
+    margin-top: 12px;
+    padding: 14px;
     width: 100%;
     border: none;
     border-radius: 16px;
     background: linear-gradient(90deg, #00c6ff, #0072ff);
     color: #fff;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: 0.2s;
 }
 
 button:active {
     transform: scale(0.97);
 }
 
-/* RESULT */
 .result {
     margin-top: 24px;
     font-size: 30px;
@@ -117,11 +117,15 @@ button:active {
 
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.08); }
     100% { transform: scale(1); }
 }
 
-/* FOOTER */
+.voice-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(0,255,255,0.4);
+}
+
 footer {
     margin-top: auto;
     padding-top: 20px;
@@ -130,11 +134,11 @@ footer {
     opacity: 0.6;
 }
 
-/* DESKTOP IMPROVEMENT */
-@media (min-width: 768px) {
-    .container {
-        padding: 32px;
-    }
+.status {
+    text-align:center;
+    font-size:12px;
+    margin-top:8px;
+    opacity:0.7;
 }
 </style>
 </head>
@@ -142,49 +146,174 @@ footer {
 <body>
 
 <div class="app">
-    <div class="container">
+<div class="container">
 
-        <div class="ai-title">🤖 AI Destekli Çalışma Süresi</div>
+<div class="ai-title" id="title">🤖 AI Çalışma Süresi</div>
 
-        <div class="marquee">
-            <span>✨ Yapay zeka hesaplıyor • ⚡ Mobil uyumlu • 🤖 Akıllı süre analizi ✨</span>
-        </div>
+<div class="marquee">
+    <span>🎤 Sesli giriş • 🧠 Akıllı hesaplama • ⚡ Mobil uyumlu</span>
+</div>
 
-        <label>Başlangıç Saati</label>
-        <input type="time" id="startTime" value="12:00">
+<div class="hint">
+🎤 Örnek konuşma:<br>
+<b>başlangıç 09:15 bitiş 12:10 mola 45</b><br>
+veya<br>
+<b>09:15 başladı 12:10 bitti 45 dakika mola</b>
+</div>
 
-        <label>Bitiş Saati</label>
-        <input type="time" id="endTime" value="13:00">
+<label>Başlangıç</label>
+<input type="time" id="startTime">
 
-        <label>Mola Süresi (dakika)</label>
-        <input type="number" id="breakMinutes" value="10">
+<label>Bitiş</label>
+<input type="time" id="endTime">
 
-        <button onclick="calculate()">🚀 Hesapla</button>
+<label>Mola (dk)</label>
+<input type="number" id="breakMinutes" value="0">
 
-        <div class="result" id="result"></div>
+<button class="voice-btn" onclick="startVoice()">🎤 Sesle Söyle</button>
+<button onclick="calculate()">🚀 Hesapla</button>
 
-        <footer>© Copyright - Bilal Tektaş</footer>
+<div class="status" id="status"></div>
+<div class="result" id="result"></div>
 
-    </div>
+<footer>© Copyright - Bilal Tektaş</footer>
+
+</div>
 </div>
 
 <script>
-function calculate() {
-    const start = document.getElementById("startTime").value;
-    const end = document.getElementById("endTime").value;
-    const breakMin = parseInt(document.getElementById("breakMinutes").value) || 0;
 
-    const [sh, sm] = start.split(":").map(Number);
-    const [eh, em] = end.split(":").map(Number);
+const recognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    ? new (window.SpeechRecognition || window.webkitSpeechRecognition)()
+    : null;
 
-    const totalStart = sh * 60 + sm;
-    const totalEnd = eh * 60 + em;
-
-    const workMinutes = totalEnd - totalStart - breakMin;
-
-    document.getElementById("result").innerText =
-        workMinutes >= 0 ? `🧠 ${workMinutes} dakika` : "⛔ Hatalı giriş";
+if(recognition){
+    recognition.lang = "tr-TR";
 }
+
+/* 🔊 SPEAK */
+function speak(text){
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "tr-TR";
+    window.speechSynthesis.speak(u);
+}
+
+/* 🎤 VOICE */
+function startVoice(){
+
+    if(!recognition){
+        alert("Ses desteklenmiyor");
+        return;
+    }
+
+    recognition.start();
+
+    document.getElementById("status").innerText = "🎤 Dinleniyor...";
+
+    recognition.onresult = (e)=>{
+        let text = e.results[0][0].transcript.toLowerCase();
+        document.getElementById("status").innerText = "🧠 " + text;
+        parse(text);
+    };
+}
+
+/* 🧠 STRICT PARSER */
+function parse(text){
+
+    text = text.toLowerCase();
+
+    let start = null;
+    let end = null;
+    let breakMin = 0;
+
+    let b = text.match(/(\d+)\s*(saat|dk|dakika)/);
+    if(b){
+        breakMin = b[2].includes("saat") ? b[1]*60 : parseInt(b[1]);
+    }
+
+    function toMin(t){
+        t = t.replace("buçuk","30");
+
+        let m = t.match(/(\d{1,2})[:\.]\s*(\d{2})/);
+        if(m) return +m[1]*60 + +m[2];
+
+        m = t.match(/(\d{1,2})\s+(\d{2})/);
+        if(m) return +m[1]*60 + +m[2];
+
+        m = t.match(/(\d{1,2})/);
+        if(m) return +m[1]*60;
+
+        return null;
+    }
+
+    let s = text.match(/(\d{1,2}[:\.]?\s*\d{0,2}).*(başla|başladı)/);
+    let e = text.match(/(\d{1,2}[:\.]?\s*\d{0,2}).*(bitti|bitir)/);
+
+    if(s) start = toMin(s[1]);
+    if(e) end = toMin(e[1]);
+
+    if(start===null || end===null){
+        let t = text.match(/(\d{1,2}[:\.]?\s*\d{0,2})/g);
+        if(t && t.length>=2){
+            start = toMin(t[0]);
+            end = toMin(t[1]);
+        }
+    }
+
+    if(start===null || end===null){
+        document.getElementById("status").innerText = "❌ Format hatalı";
+        return;
+    }
+
+    if(text.includes("öğlen") && end < start) end += 720;
+    if(text.includes("akşam") && end < 720) end += 720;
+    if(text.includes("gece") && end < start) end += 1440;
+
+    document.getElementById("startTime").value =
+        String(Math.floor(start/60)).padStart(2,"0")+":"+String(start%60).padStart(2,"0");
+
+    document.getElementById("endTime").value =
+        String(Math.floor(end/60)).padStart(2,"0")+":"+String(end%60).padStart(2,"0");
+
+    document.getElementById("breakMinutes").value = breakMin;
+
+    calculate();
+}
+
+/* ⚡ CALC */
+function calculate(){
+
+    let s = document.getElementById("startTime").value;
+    let e = document.getElementById("endTime").value;
+    let b = parseInt(document.getElementById("breakMinutes").value)||0;
+
+    if(!s||!e){
+        document.getElementById("status").innerText = "❌ eksik veri";
+        return;
+    }
+
+    let [sh,sm] = s.split(":").map(Number);
+    let [eh,em] = e.split(":").map(Number);
+
+    let start = sh*60+sm;
+    let end = eh*60+em;
+
+    if(end < start) end += 1440;
+
+    let total = end - start - b;
+
+    if(total < 0){
+        document.getElementById("status").innerText = "❌ hata";
+        return;
+    }
+
+    document.getElementById("result").innerText = `🧠 ${total} dakika`;
+
+    document.getElementById("status").innerText = "✅ hesaplandı";
+
+    speak("Çalışma süresi " + total + " dakika");
+}
+
 </script>
 
 </body>
