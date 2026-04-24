@@ -3,232 +3,294 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Çalışma Süresi</title>
+<title>AI Çalışma Süresi SIRI PRO</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 }
 
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-    color: #fff;
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: radial-gradient(circle at top,#0b1f2a,#050b14);
+    color:#fff;
+    padding:20px;
 }
 
-/* APP */
-.app {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+/* CONTAINER */
+.container{
+    width:100%;
+    max-width:440px;
+    background:rgba(255,255,255,0.06);
+    backdrop-filter:blur(22px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:26px;
+    padding:28px;
+    box-shadow:0 0 60px rgba(0,255,255,0.12);
 }
 
-/* GLASS CONTAINER (iOS STYLE) */
-.container {
-    width: 100%;
-    max-width: 420px;
-
-    background: rgba(20, 20, 25, 0.55);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 24px;
-
-    padding: 28px;
-
-    box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
-
-    display: flex;
-    flex-direction: column;
-
-    overflow: hidden;
+/* SHAKE */
+.shake{
+    animation:shake 0.35s;
+}
+@keyframes shake{
+    0%{transform:translateX(0)}
+    25%{transform:translateX(-6px)}
+    50%{transform:translateX(6px)}
+    75%{transform:translateX(-4px)}
+    100%{transform:translateX(0)}
 }
 
 /* TITLE */
-.ai-title {
-    text-align: center;
-    font-size: 22px;
-    margin-bottom: 10px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    animation: glow 2s infinite alternate;
-}
-
-@keyframes glow {
-    from { text-shadow: 0 0 6px cyan; }
-    to { text-shadow: 0 0 18px cyan; }
+.title{
+    text-align:center;
+    font-size:22px;
+    font-weight:800;
+    text-shadow:0 0 15px cyan;
 }
 
 /* MARQUEE */
-.marquee {
-    overflow: hidden;
-    white-space: nowrap;
-    margin-bottom: 18px;
+.marquee{
+    overflow:hidden;
+    white-space:nowrap;
+    margin:10px 0 18px;
+    opacity:0.7;
+    font-size:13px;
+}
+.marquee span{
+    display:inline-block;
+    padding-left:100%;
+    animation:scroll 12s linear infinite;
+}
+@keyframes scroll{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-100%)}
 }
 
-.marquee span {
-    display: inline-block;
-    padding-left: 100%;
-    animation: scroll 10s linear infinite;
-    font-size: 13px;
-    opacity: 0.75;
+/* LABEL */
+label{
+    font-size:12px;
+    opacity:0.8;
+    display:block;
+    margin:14px 0 6px;
 }
 
-@keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+/* INPUT */
+input{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.06);
+    color:#fff;
+    font-size:15px;
+    outline:none;
+    transition:0.25s;
 }
 
-/* LABEL (iOS minimal) */
-label {
-    font-size: 13px;
-    margin-top: 14px;
-    margin-bottom: 6px;
-    color: rgba(255, 255, 255, 0.75);
+input:focus{
+    border-color:#00c8ff;
+    box-shadow:0 0 0 4px rgba(0,200,255,0.2);
 }
 
-/* INPUT (APPLE STYLE) */
-input {
-    width: 100%;
-    padding: 14px;
-
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-
-    font-size: 16px;
-
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 8px 20px rgba(0, 0, 0, 0.25);
-
-    outline: none;
-
-    transition: all 0.25s ease;
-
-    font-family: inherit;
+/* BUTTONS */
+button{
+    margin-top:14px;
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:16px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.2s;
 }
 
-/* PLACEHOLDER */
-input::placeholder {
-    color: rgba(255, 255, 255, 0.35);
+.calc{
+    background:linear-gradient(90deg,#007aff,#00d4ff);
+    color:#fff;
 }
 
-/* FOCUS (iOS BLUE GLOW) */
-input:focus {
-    border: 1px solid rgba(0, 122, 255, 0.9);
-    box-shadow:
-        0 0 0 4px rgba(0, 122, 255, 0.25),
-        0 10px 25px rgba(0, 0, 0, 0.35);
-    transform: translateY(-1px);
+.voice{
+    background:rgba(255,255,255,0.08);
+    color:#00eaff;
+    border:1px solid rgba(0,234,255,0.4);
 }
 
-/* BUTTON (APPLE STYLE) */
-button {
-    margin-top: 22px;
-    padding: 16px;
-    width: 100%;
-
-    border: none;
-    border-radius: 16px;
-
-    background: linear-gradient(90deg, #007aff, #00c6ff);
-
-    color: #fff;
-    font-size: 17px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-button:active {
-    transform: scale(0.97);
-    opacity: 0.9;
+button:active{
+    transform:scale(0.97);
 }
 
 /* RESULT */
-.result {
-    margin-top: 24px;
-    font-size: 30px;
-    text-align: center;
-    font-weight: 700;
-    animation: pulse 1.4s infinite;
+.result{
+    margin-top:22px;
+    text-align:center;
+    font-size:28px;
+    font-weight:900;
+    opacity:0;
+    transform:scale(0.8);
+    transition:0.3s;
+}
+.result.show{
+    opacity:1;
+    transform:scale(1);
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-
-/* FOOTER */
-footer {
-    margin-top: auto;
-    padding-top: 20px;
-    font-size: 12px;
-    text-align: center;
-    opacity: 0.5;
+/* STATUS */
+.status{
+    text-align:center;
+    font-size:12px;
+    margin-top:10px;
+    opacity:0.7;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-    <div class="container">
+<div class="container" id="box">
 
-        <div class="ai-title">🤖 AI Çalışma Süresi</div>
+    <div class="title">🤖 AI Çalışma Süresi SIRI</div>
 
-        <div class="marquee">
-            <span>✨ Apple tarzı premium UI • ⚡ Yapay zeka hesaplama • 📱 Mobil uyumlu ✨</span>
-        </div>
-
-        <label>Başlangıç Saati</label>
-        <input type="time" id="startTime" value="12:00">
-
-        <label>Bitiş Saati</label>
-        <input type="time" id="endTime" value="13:00">
-
-        <label>Mola Süresi (dakika)</label>
-        <input type="number" id="breakMinutes" value="10">
-
-        <button onclick="calculate()">🚀 Hesapla</button>
-
-        <div class="result" id="result"></div>
-
-        <footer>© Copyright - Bilal Tektaş</footer>
-
+    <div class="marquee">
+        <span>🎤 Konuşarak giriş • 🧠 AI analiz • 🔊 Sesli geri bildirim • 🌙 Gece vardiyası</span>
     </div>
+
+    <label>Başlangıç</label>
+    <input id="start" type="time">
+
+    <label>Bitiş</label>
+    <input id="end" type="time">
+
+    <label>Mola (dk)</label>
+    <input id="break" type="number" value="0">
+
+    <button class="voice" onclick="startVoice()">🎤 Konuş</button>
+    <button class="calc" onclick="calc()">Hesapla</button>
+
+    <div class="status" id="status"></div>
+    <div class="result" id="result"></div>
+
 </div>
 
 <script>
-function calculate() {
-    const start = document.getElementById("startTime").value;
-    const end = document.getElementById("endTime").value;
-    const breakMin = parseInt(document.getElementById("breakMinutes").value) || 0;
 
-    const [sh, sm] = start.split(":").map(Number);
-    const [eh, em] = end.split(":").map(Number);
+let recognition;
 
-    const totalStart = sh * 60 + sm;
-    const totalEnd = eh * 60 + em;
-
-    const workMinutes = totalEnd - totalStart - breakMin;
-
-    document.getElementById("result").innerText =
-        workMinutes >= 0 ? `🧠 ${workMinutes} dakika` : "⛔ Hatalı giriş";
+if(window.SpeechRecognition || window.webkitSpeechRecognition){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.lang = "tr-TR";
 }
+
+/* 🔊 SPEAK */
+function speak(text){
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "tr-TR";
+    u.rate = 1;
+    window.speechSynthesis.speak(u);
+}
+
+/* 🎤 VOICE START */
+function startVoice(){
+    if(!recognition){
+        alert("Tarayıcı desteklemiyor");
+        return;
+    }
+
+    document.getElementById("status").innerText = "🎤 Dinleniyor...";
+
+    recognition.start();
+
+    recognition.onresult = (e)=>{
+        const text = e.results[0][0].transcript.toLowerCase();
+        document.getElementById("status").innerText = "🧠: " + text;
+
+        parse(text);
+    };
+}
+
+/* 🧠 NLP ENGINE */
+function parse(text){
+
+    function timeToMin(t){
+        t = t.replace("buçuk","30");
+        let m = t.match(/(\d{1,2})[:\.]?(\d{0,2})/);
+        if(!m) return null;
+        return parseInt(m[1])*60 + (parseInt(m[2]||0));
+    }
+
+    let nums = text.match(/(\d{1,2}[:\.]?\d{0,2})/g);
+
+    let breakMin = 0;
+    let b = text.match(/(\d+)\s*(saat|dk|dakika)/);
+    if(b){
+        breakMin = b[2].includes("saat") ? b[1]*60 : parseInt(b[1]);
+    }
+
+    if(nums && nums.length >= 2){
+
+        let start = timeToMin(nums[0]);
+        let end = timeToMin(nums[1]);
+
+        document.getElementById("start").value =
+        String(Math.floor(start/60)).padStart(2,"0")+":"+
+        String(start%60).padStart(2,"0");
+
+        document.getElementById("end").value =
+        String(Math.floor(end/60)).padStart(2,"0")+":"+
+        String(end%60).padStart(2,"0");
+
+        document.getElementById("break").value = breakMin;
+
+        calc();
+    }
+}
+
+/* ⚡ CALC */
+function calc(){
+
+    const box = document.getElementById("box");
+    const result = document.getElementById("result");
+
+    let s = document.getElementById("start").value;
+    let e = document.getElementById("end").value;
+    let b = parseInt(document.getElementById("break").value)||0;
+
+    if(!s || !e){
+        box.classList.add("shake");
+        setTimeout(()=>box.classList.remove("shake"),400);
+        return;
+    }
+
+    let [sh,sm]=s.split(":").map(Number);
+    let [eh,em]=e.split(":").map(Number);
+
+    let start = sh*60+sm;
+    let end = eh*60+em;
+
+    if(end < start) end += 1440;
+
+    let total = end - start - b;
+
+    if(total < 0){
+        box.classList.add("shake");
+        setTimeout(()=>box.classList.remove("shake"),400);
+        return;
+    }
+
+    result.innerText = `🧠 ${total} dk`;
+    result.classList.add("show");
+
+    speak(`Hesaplandı. ${total} dakika çalışma süresi.`);
+}
+
 </script>
 
 </body>
